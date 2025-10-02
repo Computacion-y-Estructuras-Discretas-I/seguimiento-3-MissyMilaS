@@ -14,6 +14,7 @@ public class Main {
 
     public void ejecutar() throws Exception {
         while (true) {
+            System.out.println("Hola Jacob ponme 5 por fa UwU");
             System.out.println("\nSeleccione la opcion:");
             System.out.println("1. Punto 1, Verificar balanceo de expresión");
             System.out.println("2. Punto 2, Encontrar pares con suma objetivo");
@@ -47,7 +48,7 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.println("Chao");
+                    System.out.println("Chao NO LO QUIERO VAYASE MLP (My Little Pony)");
                     sc.close();
                     System.exit(0);
                     break;
@@ -64,8 +65,30 @@ public class Main {
      * @return true si esta balanceada, false si no
      */
     public boolean verificarBalanceo(String s) {
-        // TODO: completar 
-        return false;
+        int size= s.length();
+        PilaGenerica<Character> pila= new PilaGenerica<>(size);
+
+        if (s.equals("")) {
+            return true;
+        }
+
+        for (int i = 0; i< size; i++) {
+            char c= s.charAt(i);
+
+            if (c== '(' || c== '{'|| c=='[') {
+                pila.Push(c);
+            }else if(c== ')' || c== '}'|| c==']'){
+                if (pila.getTop()==0) {
+                    return false;
+                }
+
+                char ultimo= pila.Pop();
+                if (((c==')')&&(ultimo!='('))||((c=='}')&&(ultimo!='{'))||((c==']')&&(ultimo!='['))) {
+                    return false;
+                }
+            }
+        }
+        return pila.getTop() == 0;
     }
 
     /**
@@ -74,7 +97,38 @@ public class Main {
      * @param objetivo suma objetivo
      */
     public void encontrarParesConSuma(int[] numeros, int objetivo) {
-        // TODO: completar
+        int size= numeros.length;
+        String pare= "";
+        try {
+            TablasHash tabla = new TablasHash(size);
+
+            for (int x : numeros) {
+                tabla.insert(Math.abs(x), x);
+            }
+
+            for (int x : numeros) {
+                int complemento = objetivo - x;
+                if (complemento!=x) {
+                    if (tabla.search(Math.abs(complemento),complemento)) { 
+                        pare += "("+complemento+","+x+")\n";
+                        tabla.delete(Math.abs(complemento), complemento);
+                        tabla.delete(Math.abs(x), x);
+                        if (tabla.search(Math.abs(x), x) || tabla.search(Math.abs(complemento), complemento)) {
+                            tabla.delete(Math.abs(complemento), complemento);
+                            tabla.delete(Math.abs(x), x);
+                            }
+                        }  
+                }else{
+                    pare="No hay suma de pares para"+ objetivo;
+                    }     
+            }
+            System.out.println(pare);
+               
+        } catch (Exception e) {
+            System.out.println("Error con TablasHash: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
     }
 
     public static void main(String[] args) throws Exception {
